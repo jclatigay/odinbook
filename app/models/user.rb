@@ -15,6 +15,19 @@ class User < ApplicationRecord
   has_many :follow_requests_sent, class_name: "FollowRequest", foreign_key: "follower_id", dependent: :destroy
   has_many :follow_requests_received, class_name: "FollowRequest", foreign_key: "followed_id", dependent: :destroy
 
-  has_many :following, through: :follow_requests_sent, source: :followed
-  has_many :followers, through: :follow_requests_received, source: :follower
+  has_many :following,
+           through: :follow_requests_sent,
+           source: :followed do
+             def accepted
+               merge(FollowRequest.accepted)
+             end
+           end
+
+  has_many :followers,
+           through: :follow_requests_received,
+           source: :follower do
+             def accepted
+               merge(FollowRequest.accepted)
+             end
+           end
 end

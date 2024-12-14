@@ -3,6 +3,10 @@ Rails.application.routes.draw do
 
   resources :posts, only: [ :index, :show, :new, :create ]
 
+  resources :users, only: [ :index, :show ]
+
+  resources :follow_requests, only: [ :create, :update, :destroy ]
+
   root "posts#index"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

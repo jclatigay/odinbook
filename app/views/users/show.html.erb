@@ -1,0 +1,96 @@
+<div class="container">
+  <!-- User Header -->
+  <div class="user-header mb-4">
+    <h1><%= @user.email %></h1>
+    
+    <!-- Follow/Unfollow Button -->
+    <% unless @user == current_user %>
+      <% if current_user.follow_requests_sent.exists?(followed_id: @user.id) %>
+        <%= button_to "Unfollow", 
+            follow_request_path(current_user.follow_requests_sent.find_by(followed_id: @user.id)), 
+            method: :delete, 
+            class: "btn btn-danger btn-sm" %>
+      <% else %>
+        <%= button_to "Follow", 
+            follow_requests_path(follow_request: { followed_id: @user.id }), 
+            method: :post, 
+            class: "btn btn-primary btn-sm" %>
+      <% end %>
+    <% end %>
+
+    <!-- Edit Profile Button -->
+    <% if current_user == @user %>
+      <%= link_to "Edit Profile", edit_user_registration_path, class: "btn btn-primary mt-2" %>
+    <% end %>
+  </div>
+
+  <!-- Follow Requests Section -->
+  <% if current_user == @user %>
+    <div class="follow-requests mb-4">
+      <h3>Follow Requests (<%= @user.follow_requests_received.pending.count %>)</h3>
+      <ul class="list-group">
+        <% @user.follow_requests_received.pending.each do |follow_request| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <%= link_to follow_request.follower.email, user_path(follow_request.follower), class: "text-decoration-none" %>
+            <div class="btn-group" role="group">
+              <%= button_to "Accept", 
+                  follow_request_path(follow_request, follow_request: { status: 'accepted' }), 
+                  method: :patch, 
+                  class: "btn btn-success btn-sm me-1" %>
+              <%= button_to "Reject", 
+                  follow_request_path(follow_request, follow_request: { status: 'rejected' }),
+                  method: :patch, 
+                  class: "btn btn-danger btn-sm ms-1" %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Following and Followers Section -->
+  <div class="follows-container row mb-4">
+    <div class="col-md-6">
+      <h3>Following (<%= @user.following.accepted.count %>)</h3>
+      <ul class="list-group">
+        <% @user.following.accepted.each do |followed| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <%= link_to followed.email, user_path(followed), class: "text-decoration-none" %>
+            <% if current_user == @user %>
+              <% follow_request = current_user.follow_requests_sent.find_by(followed: followed, status: :accepted) %>
+              <%= button_to "Unfollow", follow_request_path(follow_request), method: :delete, class: "btn btn-danger btn-sm" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="col-md-6">
+      <h3>Followers (<%= @user.followers.accepted.count %>)</h3>
+      <ul class="list-group">
+        <% @user.followers.accepted.each do |follower| %>
+          <li class="list-group-item">
+            <%= link_to follower.email, user_path(follower), class: "text-decoration-none" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="navigation mb-4">
+    <%= link_to "Find more users", users_path, class: "btn btn-secondary" %>
+  </div>
+
+  <!-- Posts Section -->
+  <div class="user-posts">
+    <h2>Posts</h2>
+    <ul class="list-group">
+      <% @posts.each do |post| %>
+        <li class="list-group-item">
+          <%= link_to post.content, post_path(post), class: "text-decoration-none" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

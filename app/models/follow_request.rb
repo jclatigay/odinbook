@@ -4,6 +4,9 @@ class FollowRequest < ApplicationRecord
 
   validates :follower_id, uniqueness: { scope: :followed_id }
 
-  # Simpler enum definition
-  enum :status, [ :pending, :accepted, :rejected ], default: :pending
+  enum :status, { pending: 0, accepted: 1, rejected: 2 }, default: :pending
+
+  scope :pending, -> { where(status: :pending) }
+  scope :accepted, -> { where(status: :accepted) }
+  scope :rejected, -> { where(status: :rejected) }
 end

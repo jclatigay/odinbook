@@ -3,9 +3,9 @@
 <ul class="list-group">
   <% @posts.each do |post| %>
     <li class="list-group-item mb-3">
-      <%= link_to post.content, post_path(post) %>
+      <%= post.content %>
       <div class="d-flex justify-content-between align-items-center">
-        <p><%= post.user.email %></p>
+        <p><%= link_to post.user.email, user_path(post.user) %></p>
         <p><%= post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %></p>
       </div>
     </li>
