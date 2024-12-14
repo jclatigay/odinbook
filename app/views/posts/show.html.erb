@@ -1,0 +1,7 @@
+<h1>Post</h1>
+
+<p><%= @post.content %></p>
+<p><%= @post.user.email %></p>
+<p><%= @post.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+
+<%= link_to "Back", posts_path, class: "btn btn-outline-secondary" %>

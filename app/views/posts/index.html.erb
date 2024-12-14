@@ -1,0 +1,15 @@
+<h1>Posts</h1>
+
+<ul class="list-group">
+  <% @posts.each do |post| %>
+    <li class="list-group-item mb-3">
+      <%= link_to post.content, post_path(post) %>
+      <div class="d-flex justify-content-between align-items-center">
+        <p><%= post.user.email %></p>
+        <p><%= post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %></p>
+      </div>
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to "New Post", new_post_path, class: "btn btn-primary" %>
