@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :posts, only: [ :index, :show, :new, :create ]
-
+  resources :likes, only: [ :create, :destroy ]
   resources :users, only: [ :index, :show ]
 
   resources :follow_requests, only: [ :create, :update, :destroy ]
