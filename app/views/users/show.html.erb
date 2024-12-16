@@ -8,7 +8,10 @@
       <% follow_request = current_user.follow_requests_sent.find_by(followed_id: @user.id) %>
       <% if follow_request %>
         <% if follow_request.pending? %>
-          <button class="btn btn-secondary btn-sm" disabled>Follow Request Pending</button>
+          <%= button_to "Cancel Follow Request",
+              follow_request_path(follow_request),
+              method: :delete,
+              class: "btn btn-secondary btn-sm" %>
         <% else %>
           <%= button_to "Unfollow", 
               follow_request_path(follow_request), 
@@ -93,7 +96,11 @@
     <ul class="list-group">
       <% @posts.each do |post| %>
         <li class="list-group-item">
-          <%= link_to post.content, post_path(post), class: "text-decoration-none" %>
+          <%= link_to post.content, post_path(post), class: "text-decoration-none text-dark" %>
+          <div class="d-flex align-items-center text-muted mt-2">
+            <p class="mb-0 me-3"><%= post.likes.count %> <%= post.likes.count == 1 ? 'like' : 'likes' %></p>
+            <p class="mb-0"><%= post.comments.count %> <%= post.comments.count == 1 ? 'comment' : 'comments' %></p>
+          </div>
         </li>
       <% end %>
     </ul>

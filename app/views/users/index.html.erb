@@ -8,7 +8,10 @@
         <% follow_request = current_user.follow_requests_sent.find_by(followed_id: user.id) %>
         <% if follow_request %>
           <% if follow_request.pending? %>
-            <button class="btn btn-secondary btn-sm" disabled>Follow Request Pending</button>
+            <%= button_to "Cancel Follow Request",
+                follow_request_path(follow_request),
+                method: :delete,
+                class: "btn btn-secondary btn-sm" %>
           <% else %>
             <%= button_to "Unfollow", 
                 follow_request_path(follow_request), 
