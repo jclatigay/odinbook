@@ -30,4 +30,17 @@ class User < ApplicationRecord
                merge(FollowRequest.accepted)
              end
            end
+
+  AVATAR_OPTIONS = {
+    "Monster" => "monsterid",
+    "Identicon" => "identicon",
+    "Wavatar" => "wavatar",
+    "Retro" => "retro",
+    "Robot" => "robohash"
+  }
+
+  def gravatar_url(size: 80, default: self.default_avatar || "mp", rating: "pg")
+    gravatar_id = Digest::MD5.hexdigest(email.downcase)
+    "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}&d=#{default}&r=#{rating}"
+  end
 end

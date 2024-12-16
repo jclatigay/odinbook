@@ -1,8 +1,12 @@
 <div class="container">
   <!-- User Header -->
-  <div class="user-header mb-4">
-    <h1><%= @user.email %></h1>
-    
+  <div class="user-header mb-4 mt-4 text-center">
+    <div class="profile-image mb-3">
+      <%= image_tag @user.gravatar_url(size: 120), class: "avatar shadow", alt: "#{@user.email}'s avatar" %>
+    </div>
+
+    <h1 class="display-6 mb-3"><%= @user.email %></h1>
+
     <!-- Follow/Unfollow Button -->
     <% unless @user == current_user %>
       <% follow_request = current_user.follow_requests_sent.find_by(followed_id: @user.id) %>
@@ -11,98 +15,135 @@
           <%= button_to "Cancel Follow Request",
               follow_request_path(follow_request),
               method: :delete,
-              class: "btn btn-secondary btn-sm" %>
+              class: "btn btn-outline-secondary" %>
         <% else %>
           <%= button_to "Unfollow", 
               follow_request_path(follow_request), 
               method: :delete, 
-              class: "btn btn-danger btn-sm" %>
+              class: "btn btn-outline-danger" %>
         <% end %>
       <% else %>
         <%= button_to "Follow", 
             follow_requests_path(follow_request: { followed_id: @user.id }), 
             method: :post, 
-            class: "btn btn-primary btn-sm" %>
+            class: "btn btn-primary" %>
       <% end %>
     <% end %>
 
     <!-- Edit Profile Button -->
     <% if current_user == @user %>
-      <%= link_to "Edit Profile", edit_user_registration_path, class: "btn btn-primary mt-2" %>
+      <%= link_to edit_user_registration_path, class: "btn btn-outline-primary mt-2" do %>
+        <i class="bi bi-pencil-square"></i> Edit Profile
+      <% end %>
     <% end %>
   </div>
 
   <!-- Follow Requests Section -->
   <% if current_user == @user %>
     <div class="follow-requests mb-4">
-      <h3>Follow Requests (<%= @user.follow_requests_received.pending.count %>)</h3>
-      <ul class="list-group">
+      <h3 class="h4 mb-3">
+        Follow Requests
+        <span class="badge bg-primary"><%= @user.follow_requests_received.pending.count %></span>
+      </h3>
+      <div class="list-group shadow-sm">
         <% @user.follow_requests_received.pending.each do |follow_request| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <%= link_to follow_request.follower.email, user_path(follow_request.follower), class: "text-decoration-none" %>
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <%= image_tag follow_request.follower.gravatar_url(size: 40), class: "rounded-circle me-2", style: "width: 40px; height: 40px" %>
+              <%= link_to follow_request.follower.email, user_path(follow_request.follower), class: "text-decoration-none" %>
+            </div>
             <div class="btn-group" role="group">
               <%= button_to "Accept", 
                   follow_request_path(follow_request, follow_request: { status: 'accepted' }), 
                   method: :patch, 
-                  class: "btn btn-success btn-sm me-1" %>
+                  class: "btn btn-success btn-sm" %>
               <%= button_to "Reject", 
                   follow_request_path(follow_request, follow_request: { status: 'rejected' }),
                   method: :patch, 
-                  class: "btn btn-danger btn-sm ms-1" %>
+                  class: "btn btn-danger btn-sm" %>
             </div>
-          </li>
+          </div>
         <% end %>
-      </ul>
+      </div>
     </div>
   <% end %>
 
   <!-- Following and Followers Section -->
-  <div class="follows-container row mb-4">
+  <div class="row mb-4 g-4">
     <div class="col-md-6">
-      <h3>Following (<%= @user.following.accepted.count %>)</h3>
-      <ul class="list-group">
-        <% @user.following.accepted.each do |followed| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <%= link_to followed.email, user_path(followed), class: "text-decoration-none" %>
-            <% if current_user == @user %>
-              <% follow_request = current_user.follow_requests_sent.find_by(followed: followed, status: :accepted) %>
-              <%= button_to "Unfollow", follow_request_path(follow_request), method: :delete, class: "btn btn-danger btn-sm" %>
-            <% end %>
-          </li>
-        <% end %>
-      </ul>
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-light">
+          <h3 class="h5 mb-0">Following <span class="badge bg-secondary"><%= @user.following.accepted.count %></span></h3>
+        </div>
+        <div class="list-group list-group-flush">
+          <% @user.following.accepted.each do |followed| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <%= image_tag followed.gravatar_url(size: 40), class: "rounded-circle me-2", style: "width: 40px; height: 40px" %>
+                <%= link_to followed.email, user_path(followed), class: "text-decoration-none" %>
+              </div>
+              <% if current_user == @user %>
+                <% follow_request = current_user.follow_requests_sent.find_by(followed: followed, status: :accepted) %>
+                <%= button_to "Unfollow", follow_request_path(follow_request), method: :delete, class: "btn btn-outline-danger btn-sm" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
 
     <div class="col-md-6">
-      <h3>Followers (<%= @user.followers.accepted.count %>)</h3>
-      <ul class="list-group">
-        <% @user.followers.accepted.each do |follower| %>
-          <li class="list-group-item">
-            <%= link_to follower.email, user_path(follower), class: "text-decoration-none" %>
-          </li>
-        <% end %>
-      </ul>
+      <div class="card h-100 shadow-sm">
+        <div class="card-header bg-light">
+          <h3 class="h5 mb-0">Followers <span class="badge bg-secondary"><%= @user.followers.accepted.count %></span></h3>
+        </div>
+        <div class="list-group list-group-flush">
+          <% @user.followers.accepted.each do |follower| %>
+            <div class="list-group-item d-flex align-items-center">
+              <%= image_tag follower.gravatar_url(size: 40), class: "rounded-circle me-2", style: "width: 40px; height: 40px" %>
+              <%= link_to follower.email, user_path(follower), class: "text-decoration-none" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Navigation -->
-  <div class="navigation mb-4">
-    <%= link_to "Find more users", users_path, class: "btn btn-success" %>
+  <div class="text-center mb-5">
+    <%= link_to users_path, class: "btn btn-success" do %>
+      <i class="bi bi-people-fill"></i> Find More Users
+    <% end %>
   </div>
 
   <!-- Posts Section -->
   <div class="user-posts">
-    <h2>Posts</h2>
-    <ul class="list-group">
-      <% @posts.each do |post| %>
-        <li class="list-group-item">
-          <%= link_to post.content, post_path(post), class: "text-decoration-none text-dark" %>
-          <div class="d-flex align-items-center text-muted mt-2">
-            <p class="mb-0 me-3"><%= post.likes.count %> <%= post.likes.count == 1 ? 'like' : 'likes' %></p>
-            <p class="mb-0"><%= post.comments.count %> <%= post.comments.count == 1 ? 'comment' : 'comments' %></p>
-          </div>
-        </li>
+    <h2 class="h3 mb-4">Posts</h2>
+    <div class="list-group shadow-sm">
+      <% if @user == current_user || current_user.following.accepted.include?(@user) %>
+        <% @posts.each do |post| %>
+          <%= link_to post_path(post), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-2" style="line-height: 1.5"><%= post.content %></h5>
+              <small class="text-muted"><%= time_ago_in_words(post.created_at) %> ago</small>
+            </div>
+            <div class="d-flex gap-3 text-muted">
+              <small>
+                <i class="bi bi-heart-fill text-danger"></i>
+                <%= post.likes.count %> <%= 'like'.pluralize(post.likes.count) %>
+              </small>
+              <small>
+                <i class="bi bi-chat-fill text-primary"></i>
+                <%= post.comments.count %> <%= 'comment'.pluralize(post.comments.count) %>
+              </small>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="list-group-item text-center text-muted">
+          <p class="mb-0">You need to follow this user to see their posts.</p>
+        </div>
       <% end %>
-    </ul>
+    </div>
   </div>
 </div>

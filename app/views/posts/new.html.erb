@@ -1,20 +1,35 @@
-<h1>New Post</h1>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card mt-4 shadow-sm">
+        <div class="card-header">
+          <h1 class="h3 mb-0">Create a New Post</h1>
+        </div>
 
-<%= form_with model: @post, class: "mb-3" do |form| %>
+        <div class="card-body">
+          <%= form_with model: @post, class: "mb-3" do |form| %>
+            <% if @post.errors.any? %>
+              <div class="alert alert-danger">
+                <%= @post.errors.full_messages.join(", ") %>
+              </div>
+            <% end %>
 
-  <% if @post.errors.any? %>
-    <div class="alert alert-danger">
-      <%= @post.errors.full_messages.join(", ") %>
+            <div class="mb-3">
+              <%= form.text_area :content, 
+                  placeholder: "What's on your mind?", 
+                  class: "form-control",
+                  rows: 4 %>
+            </div>
+
+            <div class="d-flex gap-2">
+              <%= form.submit "Create Post", class: "btn btn-primary" %>
+              <%= link_to posts_path, class: "btn btn-outline-secondary" do %>
+                <i class="bi bi-x-lg me-1"></i>Cancel
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-  <% end %>
-
-  <div class="mb-3">
-    <%= form.text_field :content, placeholder: "What's on your mind?", class: "form-control" %>
   </div>
-
-  <div class="mb-3">
-    <%= form.submit "Create Post", class: "btn btn-primary" %>
-  </div>
-
-  <%= link_to "Cancel", posts_path, class: "btn btn-outline-secondary" %>
-<% end %>
+</div>

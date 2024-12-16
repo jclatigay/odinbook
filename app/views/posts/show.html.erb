@@ -1,56 +1,76 @@
 <div class="container">
   <div class="post-content mt-4 mb-4">
-    <div class="card">
+    <div class="card shadow-sm">
       <div class="card-body">
-        <p class="card-text"><%= @post.content %></p>
-        
-        <div class="post-meta text-muted">
-          <p>Posted by: <%= link_to @post.user.email, user_path(@post.user), class: "text-decoration-none" %></p>
-          <p><%= @post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %></p>
-          
-          <div class="d-flex align-items-center">
-            <% if current_user.likes.exists?(post: @post) %>
-              <%= button_to "Unlike", like_path(current_user.likes.find_by(post: @post)), method: :delete, class: "btn btn-danger btn-sm me-2" %>
-            <% else %>
-              <%= button_to "Like", likes_path(post_id: @post.id), method: :post, class: "btn btn-primary btn-sm me-2" %>
-            <% end %>
-            
-            <div class="d-flex align-items-center">
-              <p class="mb-0 me-3"><%= @post.likes.count %> <%= @post.likes.count == 1 ? 'like' : 'likes' %></p>
-              <p class="mb-0"><%= @post.comments.count %> <%= @post.comments.count == 1 ? 'comment' : 'comments' %></p>
+        <div class="d-flex align-items-center mb-3">
+          <%= user_avatar(@post.user, size: 40, css_class: "rounded-circle me-2") %>
+          <div>
+            <%= link_to @post.user.email, user_path(@post.user), class: "text-decoration-none fw-bold" %>
+            <div class="text-muted small">
+              <%= @post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %>
             </div>
           </div>
+        </div>
 
-          <div class="comments-list mt-4">
-            <h4>Comments</h4>
+        <p class="card-text fs-5 mb-4"><%= @post.content %></p>
+        
+        <div class="d-flex align-items-center mb-4">
+          <% if current_user.likes.exists?(post: @post) %>
+            <%= button_to "Unlike", like_path(current_user.likes.find_by(post: @post)), 
+                method: :delete, 
+                class: "btn btn-danger btn-sm me-3" %>
+          <% else %>
+            <%= button_to "Like", likes_path(post_id: @post.id), 
+                method: :post, 
+                class: "btn btn-primary btn-sm me-3" %>
+          <% end %>
+          
+          <div class="d-flex align-items-center text-muted">
+            <div class="me-3">
+              <i class="bi bi-heart-fill me-1"></i>
+              <%= @post.likes.count %> <%= @post.likes.count == 1 ? 'like' : 'likes' %>
+            </div>
+            <div>
+              <i class="bi bi-chat-fill me-1"></i>
+              <%= @post.comments.count %> <%= @post.comments.count == 1 ? 'comment' : 'comments' %>
+            </div>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <h5 class="mb-3">Comments</h5>
+          
+          <%= form_with(model: [@post, Comment.new], local: true, class: "mb-4") do |f| %>
+            <div class="form-group">
+              <%= f.text_area :content, class: "form-control", placeholder: "Add a comment...", rows: 2 %>
+            </div>
+            <%= f.submit "Post Comment", class: "btn btn-primary btn-sm mt-2" %>
+          <% end %>
+
+          <div class="comments-list">
             <% @post.comments.order(created_at: :desc).each do |comment| %>
-              <div class="comment card mb-2">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between">
-                    <h6 class="card-subtitle mb-2 text-muted">
-                      <%= link_to comment.user.email, user_path(comment.user), class: "text-decoration-none" %>
-                    </h6>
+              <div class="comment card mb-3 border-light bg-light">
+                <div class="card-body py-2">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center">
+                      <%= user_avatar(comment.user, size: 24, css_class: "rounded-circle me-2") %>
+                      <%= link_to comment.user.email, user_path(comment.user), class: "text-decoration-none fw-semibold" %>
+                    </div>
                     <small class="text-muted">
                       <%= comment.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %>
                     </small>
                   </div>
-                  <p class="card-text"><%= comment.content %></p>
+                  <p class="card-text mb-2"><%= comment.content %></p>
                   <% if comment.user == current_user %>
-                    <%= button_to post_comment_path(@post, comment), method: :delete, class: "btn btn-danger btn-sm", data: { confirm: "Are you sure?" } do %>
-                      Delete
+                    <%= button_to post_comment_path(@post, comment), 
+                        method: :delete, 
+                        class: "btn btn-outline-danger btn-sm", 
+                        data: { turbo_confirm: "Are you sure?" } do %>
+                      <i class="bi bi-trash me-1"></i>Delete
                     <% end %>
                   <% end %>
                 </div>
               </div>
-            <% end %>
-          </div>
-
-          <div class="comments-section mt-4">
-            <%= form_with(model: [@post, Comment.new], local: true) do |f| %>
-              <div class="form-group">
-                <%= f.text_area :content, class: "form-control", placeholder: "Add a comment...", rows: 2 %>
-              </div>
-              <%= f.submit "Post Comment", class: "btn btn-primary btn-sm mt-2" %>
             <% end %>
           </div>
         </div>
@@ -59,6 +79,8 @@
   </div>
 
   <div class="post-actions">
-    <%= link_to "Back", posts_path, class: "btn btn-outline-secondary" %>
+    <%= link_to posts_path, class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Feed
+    <% end %>
   </div>
 </div>

@@ -1,30 +1,36 @@
-<h1>Users</h1>
+<div class="container mt-4">
+  <h1 class="mb-4">Users</h1>
 
-<ul class="list-group">
-  <% @users.each do |user| %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <%= link_to user.email, user_path(user) %>
-      <% unless user == current_user %>
-        <% follow_request = current_user.follow_requests_sent.find_by(followed_id: user.id) %>
-        <% if follow_request %>
-          <% if follow_request.pending? %>
-            <%= button_to "Cancel Follow Request",
-                follow_request_path(follow_request),
-                method: :delete,
-                class: "btn btn-secondary btn-sm" %>
+  <ul class="list-group shadow-sm">
+    <% @users.each do |user| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <%= image_tag user.gravatar_url(size: 40), class: "rounded-circle me-3", style: "width: 40px; height: 40px" %>
+          <%= link_to user.email, user_path(user), class: "text-decoration-none" %>
+        </div>
+        
+        <% unless user == current_user %>
+          <% follow_request = current_user.follow_requests_sent.find_by(followed_id: user.id) %>
+          <% if follow_request %>
+            <% if follow_request.pending? %>
+              <%= button_to "Cancel Follow Request",
+                  follow_request_path(follow_request),
+                  method: :delete,
+                  class: "btn btn-outline-secondary btn-sm" %>
+            <% else %>
+              <%= button_to "Unfollow", 
+                  follow_request_path(follow_request), 
+                  method: :delete, 
+                  class: "btn btn-outline-danger btn-sm" %>
+            <% end %>
           <% else %>
-            <%= button_to "Unfollow", 
-                follow_request_path(follow_request), 
-                method: :delete, 
-                class: "btn btn-danger btn-sm" %>
+            <%= button_to "Follow", 
+                follow_requests_path(follow_request: { followed_id: user.id }), 
+                method: :post, 
+                class: "btn btn-primary btn-sm" %>
           <% end %>
-        <% else %>
-          <%= button_to "Follow", 
-              follow_requests_path(follow_request: { followed_id: user.id }), 
-              method: :post, 
-              class: "btn btn-primary btn-sm" %>
         <% end %>
-      <% end %>
-    </li>
-  <% end %>
-</ul>
+      </li>
+    <% end %>
+  </ul>
+</div>
