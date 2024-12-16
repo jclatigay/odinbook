@@ -3,20 +3,20 @@
 <ul class="list-group">
   <% @posts.each do |post| %>
     <li class="list-group-item mb-3">
-      <p><%= post.content %></p>
-      <p><%= link_to post.user.email, user_path(post.user) %></p>
-      <p><%= post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %></p>
-        <div class="d-flex align-items-center">
-          <% if current_user.likes.exists?(post: post) %>
+      <p><%= link_to post.content, post_path(post), class: "text-decoration-none" %></p>
+      <p><%= link_to post.user.email, user_path(post.user), class: "text-decoration-none" %></p>
+      <p class="text-muted"><%= post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %></p>
+      <div class="d-flex align-items-center">
+        <% if current_user.likes.exists?(post: post) %>
             <%= button_to "Unlike", like_path(current_user.likes.find_by(post: post)), method: :delete, class: "btn btn-danger btn-sm me-2" %>
           <% else %>
             <%= button_to "Like", likes_path(post_id: post.id), method: :post, class: "btn btn-primary btn-sm me-2" %>
           <% end %>
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center text-muted">
             <p class="mb-0 me-3"><%= post.likes.count %> <%= post.likes.count == 1 ? 'like' : 'likes' %></p>
-            <p class="mb-0"><%= post.comments.count %> comments</p>
-          </div>
+            <p class="mb-0"><%= post.comments.count %> <%= post.comments.count == 1 ? 'comment' : 'comments' %></p>
         </div>
+      </div>
     </li>
   <% end %>
 </ul>
