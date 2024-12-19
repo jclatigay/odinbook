@@ -45,7 +45,7 @@ class User < ApplicationRecord
     "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}&d=#{default}&r=#{rating}"
   end
 
-  after_create :send_welcome_email
+  # after_create :send_welcome_email
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
@@ -59,6 +59,10 @@ class User < ApplicationRecord
   private
 
   def send_welcome_email
-    UserMailer.welcome_email(self).deliver_later
+    begin
+      UserMailer.welcome_email(self).deliver_later
+    rescue StandardError => e
+      Rails.logger.error "Failed to send welcome email: #{e.message}"
+    end
   end
 end
