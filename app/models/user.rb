@@ -45,7 +45,7 @@ class User < ApplicationRecord
     "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}&d=#{default}&r=#{rating}"
   end
 
-  # after_create :send_welcome_email
+  after_create :send_welcome_email
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
