@@ -43,4 +43,12 @@ class User < ApplicationRecord
     gravatar_id = Digest::MD5.hexdigest(email.downcase)
     "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}&d=#{default}&r=#{rating}"
   end
+
+  after_create :send_welcome_email
+
+  private
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver_later
+  end
 end
