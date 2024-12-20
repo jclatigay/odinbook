@@ -52,7 +52,7 @@
               <%= image_tag follow_request.follower.gravatar_url(size: 40), class: "rounded-circle me-2", style: "width: 40px; height: 40px" %>
               <%= link_to follow_request.follower.email, user_path(follow_request.follower), class: "text-decoration-none" %>
             </div>
-            <div class="btn-group" role="group">
+            <div class="d-flex gap-2">
               <%= button_to "Accept", 
                   follow_request_path(follow_request, follow_request: { status: 'accepted' }), 
                   method: :patch, 
