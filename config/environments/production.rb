@@ -99,5 +99,5 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
 
-  config.action_mailer.default_url_options = { host: "odinbook.onrender.com" }
+  config.action_mailer.default_url_options = { host: "mysite-s2xq.onrender.com" }
 end
