@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="card shadow-sm mt-4">
+    <div class="card-body">
+      <%= turbo_frame_tag "post_content_#{@post.id}" do %>
+        <%= form_with(model: @post, local: true) do |f| %>
+          <div class="form-group mb-3">
+            <%= f.text_area :content, class: "form-control", rows: 5 %>
+          </div>
+
+          <div class="d-flex gap-2 mb-3">
+            <%= f.submit "Update Post", class: "btn btn-primary" %>
+            <%= link_to "Cancel", post_path(@post), class: "btn btn-outline-secondary" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

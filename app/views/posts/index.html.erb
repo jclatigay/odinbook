@@ -7,18 +7,29 @@
     <% @posts.order(created_at: :desc).each do |post| %>
       <% if post.user == current_user || current_user.following.accepted.include?(post.user) %>
         <li class="list-group-item mb-3">
-          <div class="d-flex align-items-center mb-3">
-            <%= user_avatar(post.user, size: 40, css_class: "rounded-circle me-2") %>
+          <div class="d-flex justify-content-between align-items-start mb-3">
             <div>
-              <%= link_to post.user.email, user_path(post.user), class: "text-decoration-none fw-bold" %>
-              <div class="text-muted small">
-                <%= post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %>
+              <div class="d-flex align-items-center">
+                <%= user_avatar(post.user, size: 40, css_class: "rounded-circle me-2") %>
+                <div>
+                  <%= link_to post.user.email, user_path(post.user), class: "text-decoration-none fw-bold" %>
+                  <div class="text-muted small">
+                    <%= post.created_at.in_time_zone('Asia/Singapore').strftime("%B %d, %Y at %I:%M %p") %>
+                  </div>
+                </div>
               </div>
+              <% if post.updated_at != post.created_at %>
+                <div class="text-muted small ms-5">
+                  edited <%= time_ago_in_words(post.updated_at) %> ago
+                </div>
+              <% end %>
             </div>
           </div>
 
           <div class="mb-3">
-            <%= link_to post.content, post_path(post), class: "text-decoration-none text-dark fs-5" %>
+            <div class="card-text fs-5 mb-4">
+              <%= link_to simple_format(post.content), post_path(post), class: "text-decoration-none text-dark" %>
+            </div>
           </div>
 
           <div class="d-flex align-items-center mb-3">
